@@ -1,70 +1,44 @@
-class Department {
-  // private readonly id: string;
-  // private name: string;
-  private employees: string[] = [];
+class ProjectInput {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLFormElement;
+  titleInputElement: HTMLInputElement;
+  descriptionInputElement: HTMLInputElement;
+  peopleInputElement: HTMLInputElement;
 
-  constructor(private readonly id: string, public name: string) {
-    // this.id = id;
-    // this.name = n;
+  constructor() {
+    this.templateElement = document.getElementById(
+      'project-input'
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById('app')! as HTMLDivElement;
+
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as HTMLFormElement;
+    this.element.id = 'user-input';
+
+    this.titleInputElement = this.element.querySelector('#title') as HTMLInputElement;
+    this.descriptionInputElement = this.element.querySelector('#description') as HTMLInputElement;
+    this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement;
+
+    this.configure();
+    this.attach();
   }
 
-  describe(this: Department) {
-    console.log(`Department (${this.id}): ${this.name}`);
+  private submitHandler(event: Event) {
+    event.preventDefault();
+    console.log(this.titleInputElement.value);
   }
 
-  addEmployee(employee: string) {
-    // validation etc
-    // this.id = 'd2';
-    this.employees.push(employee);
+  private configure() {
+    this.element.addEventListener('submit', this.submitHandler.bind(this));
   }
 
-  printEmployeeInformation() {
-    console.log(this.employees.length);
-    console.log(this.employees);
-  }
-}
-
-class ITDepartment extends Department {
-  admins: string[];
-  constructor(id: string, admins: string[]) {
-    super(id, 'IT');
-    this.admins = admins;
-  }
-}
-
-class AccountingDepartment extends Department {
-  constructor(id: string, private reports: string[]) {
-    super(id, 'Accounting');
-  }
-
-  addReport(text: string) {
-    this.reports.push(text);
-  }
-
-  printReports() {
-    console.log(this.reports);
+  private attach() {
+    this.hostElement.insertAdjacentElement('afterbegin', this.element);
   }
 }
 
-const it = new ITDepartment('d1', ['Max']);
-
-it.addEmployee('Max');
-it.addEmployee('Manu');
-
-// it.employees[2] = 'Anna';
-
-it.describe();
-it.name = 'NEW NAME';
-it.printEmployeeInformation();
-
-console.log(it);
-
-const accounting = new AccountingDepartment('d2', []);
-
-accounting.addReport('Something went wrong...');
-
-accounting.printReports();
-
-// const accountingCopy = { name: 'DUMMY', describe: accounting.describe };
-
-// accountingCopy.describe();
+const prjInput = new ProjectInput();
